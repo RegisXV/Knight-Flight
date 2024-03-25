@@ -4,7 +4,7 @@ let gameScene = new Phaser.Scene('Game');
 
 gameScene.preload = function(){
     this.load.image('background',"assets/oak_woods_v1.0/oak_woods_v1.0/background/background_layer_1.png");
-    this.load.image('ground',"assets/Starter Tiles Platformer/SwampSetGrid.png");
+    this.load.image('ground',"assets/Starter Tiles Platformer/BasicGreenGrid.png");
     this.load.tilemapTiledJSON('tilemap', 'assets/Starter Tiles Platformer/Ground.json');
     this.load.spritesheet('knight_idle',"assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Idle.png", { frameWidth: 120, frameHeight: 80 });
     this.load.spritesheet('knight_run',"assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Run.png", { frameWidth: 120, frameHeight: 80 });
@@ -23,19 +23,18 @@ gameScene.create = function(){
     let scaleY = game.config.height / background.height; // Calculate scale based on game height
     background.setScale(scaleX, scaleY);
 
-     background.setOrigin(0); // Set origin to top-left corner
+    background.setOrigin(0); // Set origin to top-left corner
     background.setPosition(0, 0); // Set position to (0, 0)
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    const map = this.make.tilemap({key: 'tilemap' });
-    const tileset = map.addTilesetImage('Forest tiles', 'ground');
+    const map = this.make.tilemap({ key: 'tilemap' })
+    const tileset = map.addTilesetImage('forest set', 'ground')
     
-    const ground = map.createLayer('Tile Layer 1', tileset);
-    ground.setCollisionByProperty({ collide: true});
+    const ground = map.createLayer('Layer', tileset)
+    ground.setCollisionByProperty({ collide: true });
 
     this.matter.world.convertTilemapLayer(ground);
-    ground.setPosition(0, game.config.height - ground.height);
 
 
     this.anims.create({
@@ -66,8 +65,8 @@ gameScene.create = function(){
         .play('idle');
         this.knight.setBody({
             type: 'rectangle',
-            width: 40, // Adjust width and height according to your knight sprite
-            height: 70,
+            width: 20, // Adjust width and height according to your knight sprite
+            height: 30,
             density: 0.5,
             friction: 0.5,
             restitution: 0.2
@@ -107,7 +106,7 @@ let config = {
         default: 'matter',
         matter: {
             gravity: { y: 1 },
-            debug: false
+            debug: true
         }
     }
 };
