@@ -80,11 +80,11 @@ gameScene.create = function(){
 
     this.matter.world.convertTilemapLayer(ground);
 
-    this.knight = this.matter.add.sprite(50,255,'knight')
+    this.knight = this.matter.add.sprite(50,300,'knight')
         .setOrigin(0.5,0.5);
     this.knight.setBody({
         type: 'rectangle',
-        width: 27,
+        width: 25,
         height: 43,
         allowRotation: false
     })
@@ -124,7 +124,7 @@ gameScene.update = function()
     this.cursors.space)
    if (spacebar_pressed)
    {
-    this.knight.setVelocityY(-10)
+    this.knight.setVelocityY(-9)
    }
 };
 
