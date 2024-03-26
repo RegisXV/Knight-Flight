@@ -80,11 +80,11 @@ gameScene.create = function(){
 
     this.matter.world.convertTilemapLayer(ground);
 
-    this.knight = this.matter.add.sprite(50,255,'knight')
+    this.knight = this.matter.add.sprite(40,245,'knight')
         .setOrigin(0.5,0.5);
     this.knight.setBody({
         type: 'rectangle',
-        width: 27,
+        width: 20,
         height: 43,
         allowRotation: false
     })
@@ -92,6 +92,10 @@ gameScene.create = function(){
     this.knight.body.position.x +=3;
 
     this.knight.setFixedRotation(true);
+
+    this.cameras.main.startFollow(this.knight);
+
+    this.cameras.main.setZoom(1.5);
     
 
 
@@ -124,7 +128,7 @@ gameScene.update = function()
     this.cursors.space)
    if (spacebar_pressed)
    {
-    this.knight.setVelocityY(-10)
+    this.knight.setVelocityY(-9)
    }
 };
 
