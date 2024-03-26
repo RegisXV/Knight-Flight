@@ -7,6 +7,7 @@ gameScene.preload = function(){
     this.load.image('ground',"assets/Starter Tiles Platformer/BasicGreenGrid.png");
     this.load.tilemapTiledJSON('tilemap', 'assets/Starter Tiles Platformer/Ground.json');
     this.load.atlas('knight', 'assets/knight.png', 'assets/knight.json');
+    //preload finished
 };
     knight:Phaser.Physics.Matter.Sprite
 
@@ -39,8 +40,8 @@ gameScene.create = function(){
             key:'rrun',
             framerate: 2,
             frames: this.anims.generateFrameNames('knight',{
-                start:0,
-                end:9,
+                start:9,
+                end:0,
                 prefix: 'rrun',
                 suffix: '.png'
         }),
@@ -79,31 +80,51 @@ gameScene.create = function(){
 
     this.matter.world.convertTilemapLayer(ground);
 
-    this.knight = this.matter.add.sprite(50,250,'knight')
-    .play('idle');
+    this.knight = this.matter.add.sprite(50,255,'knight')
+        .setOrigin(0.5,0.5);
+    this.knight.setBody({
+        type: 'rectangle',
+        width: 27,
+        height: 43,
+        allowRotation: false
+    })
+    this.knight.body.position.y -=18;
+    this.knight.body.position.x +=3;
+
+    this.knight.setFixedRotation(true);
+    
 
 
-    console.log("Create finished");
+
+
+//create finished
 };
 
 
 gameScene.update = function()
 {
     const speed = 1.25;
+    this.knight.setSize(10,10,true)
 
    if(this.cursors.left.isDown){
-    this.knight.play('rrun')
+    this.knight.play('rrun', true)
     this.knight.setVelocityX(-speed)
     
    }
    else if (this.cursors.right.isDown){
-    this.knight.play('frun')
+    this.knight.play('frun', true)
     this.knight.setVelocityX(speed)
    }
    else
    {
     this.knight.setVelocityX(0)
-    this.knight.play('idle')
+    this.knight.play('idle', true)
+   }
+   const spacebar_pressed = Phaser.Input.Keyboard.JustDown(
+    this.cursors.space)
+   if (spacebar_pressed)
+   {
+    this.knight.setVelocityY(-10)
    }
 };
 
