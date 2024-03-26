@@ -103,7 +103,7 @@ gameScene.create = function(){
 
 gameScene.update = function()
 {
-    const speed = 400;
+    const speed = 500;
     this.knight.setSize(10,10,true)
 
    if(this.cursors.left.isDown){
