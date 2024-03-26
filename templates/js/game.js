@@ -92,12 +92,12 @@ gameScene.update = function()
     const speed = 1.25;
 
    if(this.cursors.left.isDown){
-    this.knight.play('run')
+    this.knight.play('rrun')
     this.knight.setVelocityX(-speed)
     
    }
    else if (this.cursors.right.isDown){
-    this.knight.play('run')
+    this.knight.play('frun')
     this.knight.setVelocityX(speed)
    }
    else
