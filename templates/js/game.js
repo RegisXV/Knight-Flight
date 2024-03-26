@@ -6,16 +6,59 @@ gameScene.preload = function(){
     this.load.image('background',"assets/oak_woods_v1.0/oak_woods_v1.0/background/background_layer_1.png");
     this.load.image('ground',"assets/Starter Tiles Platformer/BasicGreenGrid.png");
     this.load.tilemapTiledJSON('tilemap', 'assets/Starter Tiles Platformer/Ground.json');
-    this.load.spritesheet('knight_idle',"assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Idle.png", { frameWidth: 120, frameHeight: 80 });
-    this.load.spritesheet('knight_run',"assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Run.png", { frameWidth: 120, frameHeight: 80 });
-    this.load.spritesheet('knight_jump',"assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Jump.png", { frameWidth: 120, frameHeight: 80 });
-    this.load.spritesheet('knight_fall',"assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Fall.png", { frameWidth: 120, frameHeight: 80 });
-    //this.load.spritesheet('fire', "assets/fire_fx_v1.0/fire_fx_v1.0/png/blue/loops/burning_loop_1.png",{frameWidth: 120, frameHeight: 80});
-    console.log("Preload finished");
+    this.load.atlas('knight', 'assets/knight.png', 'assets/knight.json');
 };
-
+    knight:Phaser.Physics.Matter.Sprite
 
 gameScene.create = function(){
+    knight:Phaser.Physics.Matter.Sprite
+    const knight_animations = () =>
+    {
+        this.anims.create({
+            key:'idle',
+            framerate: 1,
+            frames: this.anims.generateFrameNames('knight',{
+                frames:[0,1,3,4,5,7,8,9],
+                prefix: 'idle',
+                suffix: '.png'
+        }),
+            repeat: -1
+        })
+        this.anims.create({
+            key:'frun',
+            framerate: 2,
+            frames: this.anims.generateFrameNames('knight',{
+                start:0,
+                end:9,
+                prefix: 'frun',
+                suffix: '.png'
+        }),
+            repeat: -1
+        })
+        this.anims.create({
+            key:'rrun',
+            framerate: 2,
+            frames: this.anims.generateFrameNames('knight',{
+                start:0,
+                end:9,
+                prefix: 'rrun',
+                suffix: '.png'
+        }),
+            repeat: -1
+        }) 
+        this.anims.create({
+            key:'jump',
+            framerate: 2,
+            frames: this.anims.generateFrameNames('knight',{
+                start:0,
+                end:2,
+                prefix: 'jump',
+                suffix: '.png'
+        }),
+            repeat: -1
+        })          
+    }
+    knight_animations();
     let background = this.add.sprite(0, 0, 'background'); // Set position to (0, 0)
     
     // Resize background image
@@ -36,42 +79,9 @@ gameScene.create = function(){
 
     this.matter.world.convertTilemapLayer(ground);
 
+    this.knight = this.matter.add.sprite(50,250,'knight')
+    .play('idle');
 
-    this.anims.create({
-        key: 'idle',
-        frames: this.anims.generateFrameNumbers('knight_idle',{ start: 0, end: 9 }),
-        frameRate: 10,
-        repeat: -1
-    });
-    this.anims.create({
-        key: 'run',
-        frames: this.anims.generateFrameNumbers('knight_run', { start: 0, end: 9 }), // Adjust frame range accordingly
-        frameRate: 10,
-        repeat: -1
-    });
-    this.anims.create({
-        key: 'jump',
-        frames: this.anims.generateFrameNumbers('knight_jump', { start: 0, end: 2 }), // Adjust frame range accordingly
-        frameRate: 10,
-        repeat: -1
-    });
-    this.anims.create({
-        key: 'fall',
-        frames: this.anims.generateFrameNumbers('knight_jump', { start: 0, end: 2 }), // Adjust frame range accordingly
-        frameRate: 10,
-        repeat: -1
-    });
-   this.knight = this.matter.add.sprite(50,250, 'knight_idle')
-        .play('idle');
-        this.knight.setBody({
-            type: 'rectangle',
-            width: 20, // Adjust width and height according to your knight sprite
-            height: 30,
-            density: 0.5,
-            friction: 0.5,
-            restitution: 0.2
-        });
-        this.knight.setFixedRotation();
 
     console.log("Create finished");
 };
