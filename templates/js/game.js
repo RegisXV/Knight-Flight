@@ -9,11 +9,10 @@ gameScene.preload = function(){
     this.load.atlas('knight', 'assets/knight.png', 'assets/knight.json');
     //preload finished
 };
-    knight:Phaser.Physics.Matter.Sprite
 
 gameScene.create = function(){
-    knight:Phaser.Physics.Matter.Sprite
-    const knight_animations = () =>
+    
+    const knight_animations = () => 
     {
         this.anims.create({
             key:'idle',
@@ -49,7 +48,7 @@ gameScene.create = function(){
         }) 
         this.anims.create({
             key:'jump',
-            framerate: 2,
+            framerate: 1,
             frames: this.anims.generateFrameNames('knight',{
                 start:0,
                 end:2,
@@ -70,7 +69,7 @@ gameScene.create = function(){
     background.setOrigin(0); // Set origin to top-left corner
     background.setPosition(0, 0); // Set position to (0, 0)
 
-    this.cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.createCursorKeys(); //Getting input from keyboard
 
     const map = this.make.tilemap({ key: 'tilemap' })
     const tileset = map.addTilesetImage('forest set', 'ground')
@@ -82,13 +81,13 @@ gameScene.create = function(){
 
     this.knight = this.matter.add.sprite(40,245,'knight')
         .setOrigin(0.5,0.5);
-    this.knight.setBody({
+    this.knight.setBody({ //hitbox for knight
         type: 'rectangle',
         width: 20,
         height: 43,
         allowRotation: false
     })
-    this.knight.body.position.y -=18;
+    this.knight.body.position.y -=18; //This code centers hitbox on knights body
     this.knight.body.position.x +=3;
 
     this.knight.setFixedRotation(true);
@@ -96,6 +95,11 @@ gameScene.create = function(){
     this.cameras.main.startFollow(this.knight);
 
     this.cameras.main.setZoom(1.5);
+
+    this.knight.setOnCollide((data) => {
+        this.isTouching = true
+        
+    });
     
 
 
@@ -108,9 +112,16 @@ gameScene.create = function(){
 gameScene.update = function()
 {
     const speed = 1.25;
+    const spacebar_pressed = Phaser.Input.Keyboard.JustDown(
+        this.cursors.space)
     this.knight.setSize(10,10,true)
-
-   if(this.cursors.left.isDown){
+    if (spacebar_pressed && this.isTouching)
+   {
+    this.knight.setVelocityY(-9)
+    this.isTouching = false;
+    this.knight.play('jump', true)
+   }
+   else if(this.cursors.left.isDown){
     this.knight.play('rrun', true)
     this.knight.setVelocityX(-speed)
     
@@ -121,15 +132,12 @@ gameScene.update = function()
    }
    else
    {
-    this.knight.setVelocityX(0)
-    this.knight.play('idle', true)
-   }
-   const spacebar_pressed = Phaser.Input.Keyboard.JustDown(
-    this.cursors.space)
-   if (spacebar_pressed)
-   {
-    this.knight.setVelocityY(-9)
-   }
+    if (!this.knight.anims.isPlaying || (this.knight.anims.currentAnim && this.knight.anims.currentAnim.key !== 'jump')) {
+        this.knight.setVelocityX(0)
+        this.knight.play('idle', true)
+    }
+    }
+   
 };
 
 let config = {
