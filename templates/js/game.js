@@ -8,6 +8,7 @@ gameScene.preload = function(){
     this.load.image('coin',"assets/Starter Tiles Platformer/coin.png");
     this.load.tilemapTiledJSON('tilemap', 'assets/Starter Tiles Platformer/Ground.json');
     this.load.atlas('knight', 'assets/knight.png', 'assets/knight.json');
+    this.load.image('reset', 'assets/reset.png');
     //preload finished
 };
 
@@ -86,7 +87,24 @@ gameScene.create = function(){
 
     this.matter.world.convertTilemapLayer(ground);
 
-    const objectsLayer = map.getObjectLayer('objects')
+    const objectsLayer = map.getObjectLayer('objects');
+
+
+    // Create win text and hide it initially
+    this.winText = this.add.text(this.sys.game.config.width / 2, (this.sys.game.config.height / 2)-100, 'You win!', { fontSize: '64px', fill: '#000' });
+    this.winText.setOrigin(0.5);
+    this.winText.visible = false;
+
+    // Create reset button and hide it initially
+    this.resetButton = this.add.sprite(this.sys.game.config.width / 2, (this.sys.game.config.height / 2) + 25, 'reset');
+    this.resetButton.setScale(0.1);
+    this.resetButton.setInteractive();
+    this.resetButton.visible = false;
+    this.resetButton.on('pointerdown', () => {
+        // Reset game here
+        this.scene.restart();
+    });
+
 
     objectsLayer.objects.forEach(objData => {
         const{x,y,name} = objData
@@ -106,6 +124,8 @@ gameScene.create = function(){
         this.knight.body.position.x +=3;
         this.knight.setFixedRotation(true);
         this.cameras.main.startFollow(this.knight);
+        this.score = 0;
+        this.scoreText = this.add.text(this.cameras.main.scrollX + 16, this.cameras.main.scrollY + 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
         this.matter.world.on('collisionstart', (event, pair) => {
             // Check if the knight is one of the bodies and if it collided with the bottom wall
             if ((pair.bodyA === this.knight.body && pair.bodyB === bottomWall.body) || 
@@ -117,8 +137,7 @@ gameScene.create = function(){
                 this.knight = this.matter.add.sprite(x, y, 'knight');
             }
         });
-        
-    
+            
         this.knight.setOnCollide((data) => {
             this.isTouching = true
             
@@ -126,16 +145,28 @@ gameScene.create = function(){
         }
         case 'coin':
             {
-                const coin = this.matter.add.sprite(x,y,'coin')
-                .setOrigin(0.5,0.5);
+                const coin = this.matter.add.sprite(x,y,'coin').setOrigin(0.5,0.5);
+                const totalCoins = (objectsLayer.objects.filter(obj => obj.name === 'coin').length)+1;
+                
                 coin.setBody({
                     type: 'circle',
-                    radius: 10
+                    radius: 7
                 });
                 coin.setStatic(true);
                 coin.setSensor(true);
                 coin.setOnCollide(() => {
                     coin.destroy();
+            
+                    // Increase score
+                    this.score += 1;
+                    this.scoreText.setText('Score: ' + this.score);
+            
+                    // Check if all coins have been collected
+                    if (this.score === totalCoins) {
+                        // Show win text and reset button
+                        this.winText.visible = true;
+                        this.resetButton.visible = true;
+                    }
                 });
             }    
         }
@@ -160,6 +191,9 @@ gameScene.create = function(){
 gameScene.update = function()
 {
     const speed = 1.25;
+    this.scoreText.setPosition(this.cameras.main.scrollX + 16, this.cameras.main.scrollY + 16);
+    this.winText.setPosition(this.cameras.main.scrollX + this.sys.game.config.width / 2, this.cameras.main.scrollY + this.sys.game.config.height / 2);
+    this.resetButton.setPosition(this.cameras.main.scrollX + this.sys.game.config.width / 2, this.cameras.main.scrollY + this.sys.game.config.height / 2 + 100);
     const spacebar_pressed = Phaser.Input.Keyboard.JustDown(
         this.cursors.space)
     this.knight.setSize(10,10,true)
@@ -198,7 +232,7 @@ let config = {
         default: 'matter',
         matter: {
             gravity: { y: 1 },
-            debug: true
+            debug: false
         }
     }
 };
